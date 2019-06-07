@@ -120,7 +120,7 @@ namespace Unicorn.ServiceModel
             var cacheFileName = CreateCacheFileName(requestUrl, packResult);
 
             // 3. 檢查檔案是否存在
-            var cacheFileStream = await PlatformService.File.OpenReadStreamAsync(cacheFileName).ConfigureAwait(false);
+            var cacheFileStream = File.OpenRead(cacheFileName);
             if (cacheFileStream == null)
             {
                 return null;
@@ -334,11 +334,11 @@ namespace Unicorn.ServiceModel
         private async Task SaveCache(TParameter parameter, string baseRequestUrl, HttpParameterPackResult packResult, HttpResponseMessage httpResponse)
         {
             var cacheFileName = CreateCacheFileName(baseRequestUrl, packResult);
-            Stream cacheFileStream = null;
+            FileStream cacheFileStream = null;
 
             try
             {
-                cacheFileStream = await PlatformService.File.OpenWriteStreamAsync(cacheFileName).ConfigureAwait(false);
+                cacheFileStream = File.OpenWrite(cacheFileName);
                 var content = await httpResponse.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                 await cacheFileStream.WriteAsync(content, 0, content.Length).ConfigureAwait(false);
 

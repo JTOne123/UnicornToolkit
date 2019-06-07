@@ -28,7 +28,7 @@ namespace Unicorn
     {
         public static async Task SerializeAsync(object obj, string filePath)
         {
-            var stream = await PlatformService.File.OpenWriteStreamAsync(filePath);
+            var stream = File.OpenWrite(filePath);
             await SerializeAsync(obj, stream);
         }
 
@@ -56,7 +56,7 @@ namespace Unicorn
 
         public static async Task<T> DeserializeAsync<T>(string filePath)
         {
-            var stream = await PlatformService.File.OpenReadStreamAsync(filePath);
+            var stream = File.OpenRead(filePath);
             return await DeserializeAsync<T>(stream);
         }
 
@@ -86,7 +86,7 @@ namespace Unicorn
 
         public static async Task<object> DeserializeAsync(string filePath)
         {
-            var stream = await PlatformService.File.OpenReadStreamAsync(filePath);
+            var stream = File.OpenRead(filePath);
             return await DeserializeAsync(stream);
         }
 
