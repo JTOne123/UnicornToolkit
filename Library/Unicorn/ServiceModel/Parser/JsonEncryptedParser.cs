@@ -18,15 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE
 
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Unicorn.Net;
-
-#if WINDOWS_UWP
-using Windows.Web.Http;
-#else
 using System.Net.Http;
-#endif
+using System.Threading.Tasks;
+using Unicorn.Net;
 
 namespace Unicorn.ServiceModel
 {
