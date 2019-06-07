@@ -26,11 +26,11 @@ namespace Unicorn.ServiceModel
 {
     public class SafeStringEnumConverter : JsonConverter
     {
-        private readonly StringEnumConverter internalConverter;
+        private readonly StringEnumConverter _internalConverter;
 
         public SafeStringEnumConverter()
         {
-            internalConverter = new StringEnumConverter()
+            _internalConverter = new StringEnumConverter()
             {
                 AllowIntegerValues = true,
             };
@@ -38,14 +38,14 @@ namespace Unicorn.ServiceModel
 
         public override bool CanConvert(Type objectType)
         {
-            return internalConverter.CanConvert(objectType);
+            return _internalConverter.CanConvert(objectType);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             try
             {
-                return internalConverter.ReadJson(reader, objectType, existingValue, serializer);
+                return _internalConverter.ReadJson(reader, objectType, existingValue, serializer);
             }
             catch (JsonSerializationException)
             {
@@ -64,7 +64,7 @@ namespace Unicorn.ServiceModel
         {
             try
             {
-                internalConverter.WriteJson(writer, value, serializer);
+                _internalConverter.WriteJson(writer, value, serializer);
             }
             catch (JsonSerializationException)
             {

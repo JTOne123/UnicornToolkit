@@ -47,19 +47,13 @@ namespace Unicorn
 
         public SignalTask(Func<Task> handler)
         {
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
-            _handler = handler;
+            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public SignalTask(Func<Task> handler, CancellationToken token)
         {
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
-            _handler = handler;
+            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
             // ReSharper disable once PossiblyMistakenUseOfParamsMethod
             _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
         }
@@ -70,7 +64,7 @@ namespace Unicorn
             {
                 handler();
 
-                return TplTaskExtensions.CompletedTask;
+                return Task.CompletedTask;
             });
         }
 
@@ -80,7 +74,7 @@ namespace Unicorn
             {
                 handler();
 
-                return TplTaskExtensions.CompletedTask;
+                return Task.CompletedTask;
             }, token);
         }
 
@@ -104,7 +98,9 @@ namespace Unicorn
             lock (_lock)
             {
                 if (_isDisposed)
+                {
                     return;
+                }
 
                 _isDisposed = true;
                 task = _task;
@@ -112,10 +108,14 @@ namespace Unicorn
             }
 
             if (!_cancellationTokenSource.IsCancellationRequested)
+            {
                 _cancellationTokenSource.Cancel();
+            }
 
             if (null == task)
+            {
                 return;
+            }
 
             try
             {
@@ -126,7 +126,9 @@ namespace Unicorn
             catch (AggregateException ex)
             {
                 if (ex.Flatten().InnerExceptions.Any(e => !(e is OperationCanceledException)))
+                {
                     Debug.WriteLine("SignalTask.Dispose(): " + ex.ExtendedMessage());
+                }
             }
             catch (Exception ex)
             {
@@ -146,15 +148,21 @@ namespace Unicorn
             lock (_lock)
             {
                 if (_isDisposed)
+                {
                     throw new ObjectDisposedException(GetType().FullName);
+                }
 
                 if (_isPending || _cancellationTokenSource.IsCancellationRequested)
+                {
                     return;
+                }
 
                 _isPending = true;
 
                 if (null != _task)
+                {
                     return;
+                }
 
                 task = new Task<Task>(CallHandlerAsync, _cancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach);
 
@@ -166,7 +174,9 @@ namespace Unicorn
             {
                 // We start the outer task *after* leaving the monitor.
                 if (TaskStatus.Created == task.Status)
+                {
                     task.Start(TaskScheduler.Default);
+                }
             }
             catch (Exception ex)
             {
@@ -187,7 +197,9 @@ namespace Unicorn
 
 #if DEBUG
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException(GetType().FullName);
+            }
 #endif
         }
 
@@ -259,7 +271,9 @@ namespace Unicorn
                 task = _task;
 
                 if (null == task || task.IsCompleted)
-                    return TplTaskExtensions.CompletedTask;
+                {
+                    return Task.CompletedTask;
+                }
 
                 if (null == _taskCompletionSource)
                 {
@@ -276,9 +290,12 @@ namespace Unicorn
                     t =>
                     {
                         var ok = taskCompletionSource.TrySetResult(true);
-
+#if DEBUG
                         if (!ok)
+                        {
                             Debug.WriteLine("SignalTask.WaitAsync() TrySetResult failed, status: " + taskCompletionSource.Task.Status);
+                        }
+#endif
                     });
             }
 

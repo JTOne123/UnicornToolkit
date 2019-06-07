@@ -28,7 +28,7 @@ namespace Unicorn
 {
     public static class HttpResponseMessageExtensions
     {
-        private static readonly string requestIdHeaderKey = "X-Request-ID";
+        private static readonly string _requestIdHeaderKey = "X-Request-ID";
 
         public static async Task<string> ReadAsStringAsync(this HttpResponseMessage source)
         {
@@ -53,13 +53,13 @@ namespace Unicorn
                 return string.Empty;
             }
 
-            return requestMessage.Headers.GetValues(requestIdHeaderKey).FirstOrDefault();
+            return requestMessage.Headers.GetValues(_requestIdHeaderKey).FirstOrDefault();
         }
 
         public static string AddRequestId(this HttpRequestMessage requestMessage)
         {
             var requestId = Guid.NewGuid().ToString("N");
-            requestMessage.Headers.Add(requestIdHeaderKey, requestId);
+            requestMessage.Headers.Add(_requestIdHeaderKey, requestId);
             return requestId;
         }
     }

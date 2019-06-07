@@ -31,7 +31,7 @@ namespace Unicorn
 
         public static Task GetSafeAwaiter(this Task task)
         {
-            return (task ?? TplTaskExtensions.CompletedTask);
+            return (task ?? Task.CompletedTask);
         }
     }
 }

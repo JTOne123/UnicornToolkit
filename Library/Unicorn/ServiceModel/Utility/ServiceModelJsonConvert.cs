@@ -27,11 +27,11 @@ namespace Unicorn.ServiceModel
 {
     public class ServiceModelJsonConvert
     {
-        private readonly static Lazy<ServiceModelJsonSerializerSettings> serviceModelJsonSerializerSettings = new Lazy<ServiceModelJsonSerializerSettings>(() => new ServiceModelJsonSerializerSettings());
+        private readonly static Lazy<ServiceModelJsonSerializerSettings> _serviceModelJsonSerializerSettings = new Lazy<ServiceModelJsonSerializerSettings>(() => new ServiceModelJsonSerializerSettings());
 
         public static T DeserializeObject<T>(string jsonString)
         {
-            return JsonConvert.DeserializeObject<T>(jsonString, serviceModelJsonSerializerSettings.Value);
+            return JsonConvert.DeserializeObject<T>(jsonString, _serviceModelJsonSerializerSettings.Value);
         }
 
         public static T DeserializeObject<T>(JToken jsonToken)
@@ -41,7 +41,7 @@ namespace Unicorn.ServiceModel
                 return default(T);
             }
 
-            return JsonConvert.DeserializeObject<T>(jsonToken.ToString(), serviceModelJsonSerializerSettings.Value);
+            return JsonConvert.DeserializeObject<T>(jsonToken.ToString(), _serviceModelJsonSerializerSettings.Value);
         }
 
         public static object DeserializeObject(JToken jsonToken, Type objectType)
@@ -56,12 +56,12 @@ namespace Unicorn.ServiceModel
                 return null;
             }
 
-            return JsonConvert.DeserializeObject(jsonToken.ToString(), objectType, serviceModelJsonSerializerSettings.Value);
+            return JsonConvert.DeserializeObject(jsonToken.ToString(), objectType, _serviceModelJsonSerializerSettings.Value);
         }
 
         public static string Serialize(object value)
         {
-            return JsonConvert.SerializeObject(value, serviceModelJsonSerializerSettings.Value);
+            return JsonConvert.SerializeObject(value, _serviceModelJsonSerializerSettings.Value);
         }
     }
 }

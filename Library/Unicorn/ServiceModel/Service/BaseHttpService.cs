@@ -32,7 +32,7 @@ namespace Unicorn.ServiceModel
         where TParameter : HttpServiceParameter
         where TParser : BaseParser<TResult, HttpResponseMessage>, new()
     {
-        private CancellationTokenSource cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
 
         /// <summary>
         /// 發送 Request 前的前置處理步驟
@@ -45,14 +45,14 @@ namespace Unicorn.ServiceModel
 
         public virtual async Task<ParseResult<TResult>> InvokeAsync(TParameter parameter, CancellationTokenSource cancellationTokenSource = null)
         {
-            this.cancellationTokenSource = cancellationTokenSource;
+            this._cancellationTokenSource = cancellationTokenSource;
 
-            if (this.cancellationTokenSource == null)
+            if (this._cancellationTokenSource == null)
             {
                 return await Task.Run(() => Invoke(parameter)).ConfigureAwait(false);
             }
 
-            if (this.cancellationTokenSource.IsCancellationRequested)
+            if (this._cancellationTokenSource.IsCancellationRequested)
             {
                 return new ParseResult<TResult>(new ParseError(true));
             }
@@ -98,7 +98,7 @@ namespace Unicorn.ServiceModel
                 cacheResponse.Content.Dispose();
                 cacheResponse.Dispose();
 
-                if (cancellationTokenSource?.IsCancellationRequested == true)
+                if (_cancellationTokenSource?.IsCancellationRequested == true)
                 {
                     result = new ParseResult<TResult>(new ParseError(true));
                 }
@@ -221,14 +221,14 @@ namespace Unicorn.ServiceModel
                     await SaveCache(parameter, requestUrl, packResult, httpResponse).ConfigureAwait(false);
                 }
 
-                if (cancellationTokenSource?.IsCancellationRequested == true)
+                if (_cancellationTokenSource?.IsCancellationRequested == true)
                 {
                     return new ParseResult<TResult>(new ParseError(true));
                 }
 
                 var parseResult = await ParseResponse(httpResponse).ConfigureAwait(false);
 
-                if (cancellationTokenSource?.IsCancellationRequested == true)
+                if (_cancellationTokenSource?.IsCancellationRequested == true)
                 {
                     parseResult = new ParseResult<TResult>(new ParseError(true));
                 }
@@ -287,7 +287,7 @@ namespace Unicorn.ServiceModel
 
                 httpRequestMessage.Dispose();
 
-                if (cancellationTokenSource != null && cancellationTokenSource.IsCancellationRequested)
+                if (_cancellationTokenSource != null && _cancellationTokenSource.IsCancellationRequested)
                 {
                     // 被 cancel 了就不要有回傳的東西了
                     httpResponse?.Dispose();
@@ -321,13 +321,13 @@ namespace Unicorn.ServiceModel
         {
             var httpClient = HttpClientContainer.Get();
 
-            if (cancellationTokenSource == null)
+            if (_cancellationTokenSource == null)
             {
                 return await httpClient.SendAsync(httpRequestMessage);
             }
             else
             {
-                return await httpClient.SendAsync(httpRequestMessage, cancellationTokenSource.Token);
+                return await httpClient.SendAsync(httpRequestMessage, _cancellationTokenSource.Token);
             }
         }
 

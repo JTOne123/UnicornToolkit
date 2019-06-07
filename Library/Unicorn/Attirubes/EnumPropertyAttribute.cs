@@ -29,29 +29,24 @@ namespace Unicorn
     [AttributeUsage(AttributeTargets.Field)]
     public class EnumPropertyAttribute : Attribute
     {
-        private string[] keys;
-
         /// <summary>
         /// EnumDescription的Key
         /// </summary>
         public string Key
         {
-            get { return keys[0]; }
+            get { return Keys[0]; }
         }
 
-        public string[] Keys
-        {
-            get { return keys; }
-        }
+        public string[] Keys { get; }
 
         public EnumPropertyAttribute(string key)
         {
-            keys = new string[] { key };
+            Keys = new string[] { key };
         }
 
         public EnumPropertyAttribute(params string[] keys)
         {
-            this.keys = keys;
+            Keys = keys;
         }
     }
 }

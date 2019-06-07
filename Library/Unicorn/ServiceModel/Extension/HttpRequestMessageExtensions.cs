@@ -25,7 +25,7 @@ namespace Unicorn
 {
     public static class HttpRequestMessageExtensions
     {
-        private static string TimeoutPropertyKey = "RequestTimeout";
+        private static string _timeoutPropertyKey = "RequestTimeout";
 
         public static void SetTimeout(this HttpRequestMessage request, TimeSpan timeout)
         {
@@ -34,7 +34,7 @@ namespace Unicorn
                 throw new ArgumentNullException(nameof(request));
             }
 
-            request.Properties[TimeoutPropertyKey] = timeout;
+            request.Properties[_timeoutPropertyKey] = timeout;
         }
 
         public static TimeSpan? GetTimeout(this HttpRequestMessage request)
@@ -44,7 +44,7 @@ namespace Unicorn
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (request.Properties.TryGetValue(TimeoutPropertyKey, out var value) && value is TimeSpan timeout)
+            if (request.Properties.TryGetValue(_timeoutPropertyKey, out var value) && value is TimeSpan timeout)
             {
                 return timeout;
             }

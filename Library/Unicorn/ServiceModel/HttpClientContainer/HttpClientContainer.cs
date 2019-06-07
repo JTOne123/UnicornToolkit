@@ -25,7 +25,7 @@ namespace Unicorn.ServiceModel
 {
     public class HttpClientContainer
     {
-        private static Lazy<HttpClient> httpClientInstance = new Lazy<HttpClient>(() =>
+        private static Lazy<HttpClient> _httpClientInstance = new Lazy<HttpClient>(() =>
         {
             var timeoutHandler = new TimeoutHandler();
             var httpClient = new HttpClient(timeoutHandler);
@@ -37,7 +37,7 @@ namespace Unicorn.ServiceModel
 
         public static HttpClient Get()
         {
-            return httpClientInstance.Value;
+            return _httpClientInstance.Value;
         }
     }
 }
